@@ -3,6 +3,7 @@ import recipeView from "./views/recipeView.js";
 import searchView from "./views/searchView.js";
 import resultsView from "./views/resultsView.js";
 import paginationView from "./views/paginationView.js";
+import bookmarksView from "./views/bookmarksView.js";
 
 // import "core-js/stable";
 // import "regenerator-runtime/runtime";
@@ -19,6 +20,7 @@ const controlRecipes = async function () {
 
     // actualizar resultView
     resultsView.update(model.getSearchResultsPage());
+    bookmarksView.update(model.state.bookmarks);
 
     // cargar receta
     await model.loadRecipe(id);
@@ -69,13 +71,23 @@ const controlServings = function (newServings) {
 };
 
 const controlAddBookmark = function () {
+  // agregar o eliminar bookmark
   if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
   else model.deleteBookmark(model.state.recipe.id);
 
-  recipeView.render(model.state.recipe); // iria update pero no me funciona :(
+  // actualizar view
+  recipeView.update(model.state.recipe);
+
+  // render bookmarks
+  bookmarksView.render(model.state.bookmarks);
+};
+
+const controlBookmarks = function () {
+  bookmarksView.render(model.state.bookmarks);
 };
 
 const init = function () {
+  //bookmarksView.addHandlerRender(controlBookmarks);
   recipeView.addHandlerRender(controlRecipes);
   recipeView.addHandlerUpdateServings(controlServings);
   recipeView.addHandlerAddBookmark(controlAddBookmark);
